@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "chromadb-helm.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "chromadb-helm.labels" . | nindent 4 }}
 spec:
@@ -66,21 +67,17 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: local-time
-              mountPath: /etc/localtime
-              readOnly: true
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        - name: local-time
-          hostPath:
-            path: /etc/localtime
-            type: ""
       {{- range .Values.volumes }}
         - name: {{ .pvcName | quote }}
           persistentVolumeClaim:
             claimName: {{ .pvcName }}
+      {{- end }}
+      {{- with .Values.hostpaths }}
+        {{- toYaml . | nindent 8}}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

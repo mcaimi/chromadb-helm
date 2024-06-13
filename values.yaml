@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
+namespace: chromadb
 
 image:
   repository: quay.io/marcocaimi/chromadb
@@ -85,8 +86,18 @@ volumes:
     storageClassName: local-path
     volumeMode: Filesystem
 
+# host paths (privileged container required, does not work on openshift by default)
+hostpaths:
+  - name: local-time
+    hostPath:
+      path: /etc/localtime
+      type: ""
+
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
+  - name: local-time
+    mountPath: /etc/localtime
+    readOnly: true
   - name: chroma-data
     mountPath: /chroma_data
 
