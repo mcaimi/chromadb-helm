@@ -40,6 +40,7 @@ spec:
                   fieldPath: status.podIP
             - name: CHROMAPORT
               value: "{{ .Values.service.port }}"
+          args: ["$(CHROMAHOST)", "$(CHROMAPORT)"]
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
